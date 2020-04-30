@@ -1,20 +1,28 @@
+const connectionObj = require('../utils/connection');
+const config = require('../utils/config');
 const usersModel = require('../models/usersMd');
+const jwt = require('jsonwebtoken');
+/**
+ * User controller
+ * Author: Gaurish Rane
+ * Created at: 30 April 2020
+ */
 
-exports.getUserRecords = async(req, res, next) => {
+exports.getUserDetails = async(req, res, next) => {
     try {
+
+        let connObj = await connectionObj.connect();
+        let result = await usersModel.getUsers(connObj, { id: res.id });
 
         res.send({
             status: true,
-            data: [{
-
-            }],
-            message: 'Success',
+            data: result,
+            message: '',
         });
-    } catch (e) {
 
+    } catch (e) {
         res.send({
             status: false,
-            data: [],
             reason: e.toString(),
         });
     }
@@ -24,13 +32,12 @@ exports.createRegistration = async(req, res, next) => {
     try {
         let regForm = req.body;
 
-        var user = await usersModel.createUsers(regForm);
-
+        let connObj = await connectionObj.connect();
+        let userRegistration = await usersModel.createUsers(connObj, regForm);
 
         res.send({
             status: true,
-            data: [{}],
-            input: regForm,
+            data: userRegistration,
             message: 'Create successfully',
         });
     } catch (e) {
@@ -46,23 +53,17 @@ exports.createRegistration = async(req, res, next) => {
 exports.checkLogin = async(req, res, next) => {
     try {
         let loginForm = req.body;
+        let connObj = await connectionObj.connect();
 
-        if (loginForm.username == 'gaurish' && loginForm.password == '123') {
-            var response = {
-                status: true,
-                data: [{}],
-                input: loginForm,
-                message: 'Welcome user.',
-            };
-        } else {
-            var response = {
-                status: false,
-                data: [{}],
-                reason: 'Invalid login or password',
-            };
-        }
+        let result = await usersModel.checkUserAuth(connObj, loginForm);
+        let token = jwt.sign({ result }, config.environments[config.environment].jwtKey);
 
-        res.send(response);
+        res.send({
+            status: true,
+            token: token,
+            message: 'Login successfully',
+        });
+
     } catch (e) {
 
         res.send({

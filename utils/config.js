@@ -1,17 +1,19 @@
 const baseSetting = {
     environment: 'dev',
     connectionName: 'iconnectServer',
-    host: 'localhost',
-    mongoDB: 'demoapp',
-    dbPort: 27017,
     environments: {
         dev: {
             port: 5555,
-            baseUrl: '/iconnect-server/'
+            baseUrl: '/iconnect-server/',
+            dbUsername: 'gaurish',
+            dbPassword: 'iConnectDBUser',
+            mongoDB: 'test',
+            jwtKey: '02z[8sdf}%d23'
         },
         production: {
             port: process.env.PORT,
-            baseUrl: '/iconnect-server/'
+            baseUrl: '/iconnect-server/',
+
         }
     }
 };
