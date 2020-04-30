@@ -26,6 +26,7 @@ exports.createRegistration = async(req, res, next) => {
 
         var user = await usersModel.createUsers(regForm);
 
+
         res.send({
             status: true,
             data: [{}],
